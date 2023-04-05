@@ -1,0 +1,26 @@
+{
+  "name": "keepmind",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "watch": "vue-cli-service build --watch",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "npm-watch": "^0.11.0",
+    "pinia": "^2.0.32",
+    "sass": "^1.59.3",
+    "vue": "^3.2.47",
+    "vue-picture-input": "^2.4.0",
+    "vue-router": "^4.1.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "eslint": "^8.34.0",
+    "eslint-plugin-vue": "^9.9.0",
+    "vite": "^4.1.4"
+  }
+}

@@ -1,0 +1,29 @@
+{
+    "cards":[], 
+    "themes":[
+        {
+            "id":0,
+            "name" : "Voiture", 
+            "description" : "",
+            "creation_date":"", 
+            "cards":[], 
+            "max_level":0, 
+            "last_revision":"",
+            "cards_revision" : [
+                [], [], [], [], [], [], []
+            ]
+        }, 
+        {
+            "id":1,
+            "name" : "Leçon de français", 
+            "description" : "",
+            "creation_date":"", 
+            "cards":[], 
+            "max_level":0, 
+            "last_revision":"",
+            "cards_revision" : [
+                [], [], [], [], [], [], []
+            ]
+        }
+    ]
+}
