@@ -1,9 +1,9 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import { useDataStore } from './stores/data';
 
-let store = useDataStore()
-store.initStorage()
+const store = useDataStore()
+store.init()
 // store.clearData() 
 
 </script>

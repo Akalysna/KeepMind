@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useCardStore } from '../../stores/card'
 import { useThemeStore } from '../../stores/theme';
+import { reactive, ref } from 'vue'
 import Card from '../../components/Card.vue';
-import { Ref, reactive, ref } from 'vue'
 import TopBar from '../../components/TopBar.vue';
 
 const props = defineProps({

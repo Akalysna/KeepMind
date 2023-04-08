@@ -1,25 +1,25 @@
-<script setup>
+<script setup lang="ts">
+//Store
 import { useThemeStore } from '../stores/theme'
+import { useDataStore } from '../stores/data';
+//Component
 import ThemeItem from "../components/ThemeItem.vue";
 import Stats from '../components/Stats.vue';
-import { useDataStore } from '../stores/data';
 
-let store = useThemeStore()
 const dataStore = useDataStore()
-let themes = store.getThemes()
+const themeStore = useThemeStore()
+let themes = themeStore.getThemes()
 
-console.log({ themes });
 </script>
 
 
 <template>
   <header>
-
     <h1>Keep Mind</h1>
 
     <div class="stats">
-      <Stats :number="dataStore.getNumTheme()" name="Themes" />
-      <Stats :number="dataStore.getNumCard()" name="Cartes" />
+      <Stats :number="dataStore.getThemeCount()" name="Themes" />
+      <Stats :number="dataStore.getCardCount()" name="Cartes" />
       <Stats :number="0" name="Apprise" />
     </div>
   </header>
@@ -28,21 +28,18 @@ console.log({ themes });
     <h2>Mes thèmes</h2>
 
     <div class="themes">
-      <ThemeItem v-for="(item, index) in themes" :theme="item" />
+      <ThemeItem v-for="item in themes" :theme="item" />
     </div>
   </section>
-
-  <!-- <li v-for="(item, index) in themes" :key="index">{{ item.name }}, {{ store.getNumberCard(item.id) }}</li> -->
 </template>
 
 <style scoped lang="scss">
 header {
-
-  padding-top: 2em;
   display: flex;
+  justify-content: end;
   flex-direction: column;
   align-items: center;
-  justify-content: end;
+  padding-top: 2em;
 
   background-color: #171717;
 
@@ -51,35 +48,30 @@ header {
     color: white;
     font-size: 3em;
   }
-
-
 }
-
 .stats {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
   width: 80%;
 }
 
-section{
+section {
   margin: 1em 1.5em;
 }
-
-.themes{
+.themes {
   display: flex;
-flex-direction: column;
-overflow: auto;
-gap: 1em;
+  flex-direction: column;
+  overflow: auto;
+  gap: 1em;
 }
 
-h2{
+h2 {
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
   font-family: Barlow-SemiBold;
   font-size: 1.6em;
   text-transform: uppercase;
-  margin-bottom: 0.5em;
-  margin-left: 0.5em;
 }
 </style>

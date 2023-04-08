@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { PropType } from 'vue';
-import { CardFace } from '../model/interface'
-import { ref, reactive, computed } from 'vue'
 import { useCardStore } from '../stores/card';
+import { CardFace } from '../model/interface'
+import { PropType } from 'vue';
+import { ref } from 'vue'
 
 const cardStore = useCardStore()
 const props = defineProps({
@@ -11,18 +11,18 @@ const props = defineProps({
     recto: { type: Object as PropType<CardFace>, required: true },
     verso: { type: Object as PropType<CardFace>, required: true },
     edit: { type: Boolean, required: true },
+    showVerso: { type: Boolean, default:true },
+
 })
 
 let showEdit = ref(false)
-function show(){
-    showEdit.value = !showEdit.value
-    console.log("ShowEdit : ", showEdit);
-    console.log("Edit : ", props.edit);
-}
 
+/**Masque ou non les boutons d'option de la carte */
+function show(){ showEdit.value = !showEdit.value }
+
+/**Supression de la carte */
 function deleteCard(){
     cardStore.deleteCard(props.id, props.idTheme)
-    console.log("Suppression de la carte : ", props.id);
 }
 </script>
 
@@ -31,7 +31,7 @@ function deleteCard(){
         <div class="card-top">
             <p>{{ recto.data }}</p>
         </div>
-        <div class="card-bottom">
+        <div v-show="showVerso" class="card-bottom">
             <p>{{ verso.data }}</p>
         </div>
         <div v-show="edit && showEdit" class="card-edit">
@@ -84,8 +84,25 @@ function deleteCard(){
         }
     }
 
+    &-edit{
+        background-color: #D9D9D9;
+        display: flex;
+        justify-content: space-between;
+
+        button{
+            font-size: 1.4em;
+            padding: 0.8em;
+            width: 100%;
+            border: none;
+            background-color: transparent;
+            font-family: "Barlow-Medium";
+            border-top: 1px solid #000;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+    }
+
     p {
-        // word-wrap: break-word;
         width: 100%;
         overflow-wrap: break-word;
     }

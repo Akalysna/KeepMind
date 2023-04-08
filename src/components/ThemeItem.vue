@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import type { PropType } from 'vue'
-import { Theme } from "../model/interface";
 import { useThemeStore } from "../stores/theme"
+import { Theme } from "../model/interface";
+import type { PropType } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   theme: { type: Object as PropType<Theme>, required: true }
@@ -28,7 +28,7 @@ function goTo() {
     </div>
 
     <!-- Nombre de carte -->
-    <p class="theme-item-qte">{{ store.getNumberCard(theme.id) }}</p>
+    <p class="theme-item-qte">{{ store.getCardCount(theme.id) }}</p>
   </div>
 </template>
 

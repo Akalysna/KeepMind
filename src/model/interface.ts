@@ -6,7 +6,8 @@ export interface Theme {
     cards: number[],
     max_level: number,
     last_revision: string,
-    [cards_revision: number]: number[]
+    first_revision:string,
+    cards_revision: [number[], number[], number[], number[], number[], number[], number[], number[]]
 }
 
 export interface CardFace {

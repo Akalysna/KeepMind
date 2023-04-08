@@ -20,14 +20,18 @@ const theme = storeTheme.getTheme(props.id)
 
 let cards: number[] = theme?.cards || []
 
-
 function goToCards() {
     router.push({ path: `/theme/${props.id}/cards` })
+}
+
+function goToRevision() {
+    router.push({ path: `/theme/${props.id}/game` })
 }
 
 </script>
 
 <template>
+
     <Topbar :show-setting="true" path="/"/>
 
     <div class="core">
@@ -37,10 +41,10 @@ function goToCards() {
 
         <div class="btns">
             <button class="edit" v-on:click="goToCards()">Modifier</button>
-            <button class="revision">Révisé</button>
+            <button class="revision" v-on:click="goToRevision()">Révisé</button>
         </div>
 
-            <h2>Cartes ({{ storeTheme.getNumberCard(id) }})</h2>
+            <h2>Cartes ({{ storeTheme.getCardCount(id) }})</h2>
 
             <div class="cards">
                 <Card v-for="(idCard) in cards"

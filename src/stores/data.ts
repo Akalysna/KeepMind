@@ -3,33 +3,14 @@ import json from './data/KeepMind.json'
 import { Card, DataApp, Theme } from "../model/interface";
 
 export const useDataStore = defineStore('data', () => {
- 
-    let data:DataApp = {
+
+    let data: DataApp = {
         cards: [],
         themes: []
     };
-
-    function getNumTheme(){
-        return data.themes.length
-    }
-    function getNumCard(){
-        return data.cards.length
-    }
-
-    function getData(){
-        return data
-    }
-
-    function clearData(){
-        localStorage.clear()
-        data = {
-        cards: [],
-        themes: []
-    };
-    }
 
     /**Initialisation de la "base de donnée" */
-    function initStorage() {
+    function init() {
 
         //Si les données existe dans le local storage les utilisés
         if (localStorage.getItem("data") == null) {
@@ -39,27 +20,52 @@ export const useDataStore = defineStore('data', () => {
             data = JSON.parse(localStorage.getItem("data") || "")
         }
 
-        console.log("Base de données courant : ", data);
-        return data
+        console.log("Données de la BDD : ", data);
     }
 
-    /**Mise à jour les données des thèmes de l'application */
-    function updateThemeStorage(themes:Theme[]) {
+    /**Retourne les données de l'application. Initialement présent dans le json */
+    function getData() { return data }
+
+    /**Supprime définitivement les données de l'application */
+    function clearData() {
+        localStorage.clear()
+        data = {
+            cards: [],
+            themes: []
+        };
+    }
+
+
+    /**
+     * Met à jour les données des thèmes de l'application 
+     * @param themes Tableau des thèmes de l'application à "sauvegarder"
+     */
+    function updateThemeStorage(themes: Theme[]) {
         data.themes = themes
         updateData(data)
     }
 
-    /** Mise à jour des données des cartes de l'application */
-    function updateCardStorage(cards:Card[]) {
+    /**
+     * Met à jour les données des cartes de l'application
+     * @param cards Tableau des cartes de l'application à "sauvegarder"
+     */
+    function updateCardStorage(cards: Card[]) {
         data.cards = cards
         updateData(data)
     }
 
-    /** Mise à jour de la base de données */
-    function updateData(data:DataApp) {
+    /** Met à jour les données de l'application */
+    function updateData(data: DataApp) {
         localStorage.setItem("data", JSON.stringify(data))
         return true
     }
 
-    return { getData, initStorage, updateCardStorage, updateThemeStorage, clearData, getNumCard, getNumTheme }
+
+    /**Retourne le nombre de thème dans l'application */
+    function getThemeCount() { return data.themes.length }
+
+    /**Retourne le nombre de carte dans l'application */
+    function getCardCount() { return data.cards.length }
+
+    return { init, getData, clearData, updateCardStorage, updateThemeStorage, getCardCount, getThemeCount }
 })

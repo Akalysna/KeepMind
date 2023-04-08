@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const props = defineProps({
+defineProps({
     number: {
         type: Number,
         required: true
@@ -28,7 +28,6 @@ const props = defineProps({
 
     padding: 1em;
 
-    
     p{
         color: white;
         font-family: Barlow-Regular;

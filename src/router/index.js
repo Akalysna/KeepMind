@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import ThemeView from '../views/Theme/ThemeView.vue'
 import CreateThemeView from '../views/Theme/CreateThemeView.vue'
 import CreateCardView from '../views/Theme/CreateCardView.vue'
+import GameView from '../views/Game/GameView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,14 +13,6 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: { transition: 'slide-left' },
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
     },
     {
       path: '/theme/:id',
@@ -33,6 +26,12 @@ const router = createRouter({
       name: 'create-theme',
       component:CreateThemeView
     }, 
+    {
+      path: '/theme/:id/game',
+      name: 'game-view',
+      props:true,
+      component: GameView
+    },
     {
       path: '/theme/:id/cards',
       name: 'cards',
