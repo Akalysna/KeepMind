@@ -8,7 +8,7 @@ const props = defineProps({
   theme: { type: Object as PropType<Theme>, required: true }
 })
 
-const store = useThemeStore()
+const storeTheme = useThemeStore()
 const router = useRouter()
 
 /**Navigue vers la page de détail du thème */
@@ -28,7 +28,7 @@ function goTo() {
     </div>
 
     <!-- Nombre de carte -->
-    <p class="theme-item-qte">{{ store.getCardCount(theme.id) }}</p>
+    <p class="theme-item-qte">{{ storeTheme.getCardCount(theme.id) }}</p>
   </div>
 </template>
 

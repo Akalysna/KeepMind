@@ -4,12 +4,12 @@ import { useDataStore } from "./data";
 export const useThemeStore = defineStore('theme', ()=> {
 
     /**Récupération des thèmes de l'appli */
-    const dataStore = useDataStore();
-    const themes = dataStore.themes
+    const storeData = useDataStore();
+    const themes = storeData.themes
 
     /**Sauvegarde des données de l'application */
     function save(){
-        dataStore.save()
+        storeData.save()
     }
 
     /**Vérifie si un thème existe */

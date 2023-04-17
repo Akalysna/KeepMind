@@ -6,9 +6,13 @@ import { useDataStore } from '../stores/data';
 import ThemeItem from "../components/ThemeItem.vue";
 import Stats from '../components/Stats.vue';
 
-const dataStore = useDataStore()
+const storeData = useDataStore()
 const themeStore = useThemeStore()
 let themes = themeStore.getThemes()
+
+function clear(){
+storeData.clearData() 
+}
 
 </script>
 
@@ -18,11 +22,13 @@ let themes = themeStore.getThemes()
     <h1>Keep Mind</h1>
 
     <div class="stats">
-      <Stats :number="dataStore.getThemeCount()" name="Themes" />
-      <Stats :number="dataStore.getCardCount()" name="Cartes" />
+      <Stats :number="storeData.getThemeCount()" name="Themes" />
+      <Stats :number="storeData.getCardCount()" name="Cartes" />
       <Stats :number="0" name="Apprise" />
     </div>
   </header>
+
+  <button v-on:click="clear()">Supprime tout !</button>
 
   <section>
     <h2>Mes thèmes</h2>

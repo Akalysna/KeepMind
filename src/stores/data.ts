@@ -56,12 +56,8 @@ export const useDataStore = defineStore('data', () => {
             
         } else {
             let tmpJson = JSON.parse(localStorage.getItem("data") || "")
-            console.log(tmpJson);
             normalize(tmpJson.themes as Theme[], tmpJson.cards)
         }
-
-        console.log(themes);
-        console.log(cards);
     }
 
     /**Supprime définitivement les données de l'application */
@@ -78,5 +74,9 @@ export const useDataStore = defineStore('data', () => {
     /**Retourne le nombre de carte dans l'application */
     function getCardCount() { return Object.keys(cards).length }
 
-    return { themes, cards, save, init, clearData, getCardCount, getThemeCount }
+    function showData(){
+        console.log("Les données on été sauvegardé : " , {themes, cards});
+    }
+
+    return { themes, cards, save, init, clearData, getCardCount, getThemeCount, showData }
 })

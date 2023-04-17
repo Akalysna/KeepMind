@@ -9,8 +9,8 @@ import { useRevisionStore } from '../../stores/revision';
 import { useGameStore } from '../../stores/game';
 import CardCPS from '../../components/Card.vue'
 
-const themeStore = useThemeStore()
-const cardStore = useCardStore()
+const storeTheme = useThemeStore()
+const storeCard = useCardStore()
 const revisionStore = useRevisionStore()
 const props = defineProps({
     id: { type: Number, required: true }
@@ -37,13 +37,13 @@ O Retourner les cartes du dernier niveau du jour
 //Vérifier s'il y a des cartes a réviser
 
 //Redirection vers la page précédente
-if (!themeStore.contain(props.id)) {
+if (!storeTheme.contain(props.id)) {
     console.log("Erreur lors du chargement du thème")
     router.go(-1)
 }
 
 /**Theme courant */
-const theme: Theme = themeStore.getTheme(props.id) || {} as Theme;
+const theme: Theme = storeTheme.getTheme(props.id) || {} as Theme;
 
 /**Espacement des niveaux en fonction des jours*/
 const daySpace = {
@@ -77,9 +77,9 @@ if (getDayDiffWithToday(theme.last_revision) != 0) {
 }
 
 nextLevel()
-console.log(themeStore.getThemes());
+console.log(storeTheme.getThemes());
 
-let card:Ref<Card> = ref(cardStore.getCard(cardsLevel.pop() ??0) ?? {} as Card); 
+let card:Ref<Card> = ref(storeCard.getCard(cardsLevel.pop() ??0) ?? {} as Card); 
 console.log(card.value);
 
 
@@ -140,7 +140,7 @@ function nextLevel() {
 
 // function answer(cardId:number, isCorrect:boolean){
 //     console.log({cardId});
-//     console.log(themeStore.getThemes());
+//     console.log(storeTheme.getThemes());
 //     gameStore.cardAnswer(props.id, cardId, isCorrect )
 //     next()
 // }
@@ -150,7 +150,7 @@ function nextLevel() {
 //     console.log({cardsLevel});
     
 //     if (cardsLevel.length > 0) {
-//         card.value = cardStore.getCard(cardsLevel.pop() ??0) ?? {} as Card
+//         card.value = storeCard.getCard(cardsLevel.pop() ??0) ?? {} as Card
 //         console.log(card.value);
 //     } else {
 //         nextLevel()

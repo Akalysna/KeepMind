@@ -4,9 +4,9 @@ import { useDataStore } from './data';
 
 export const useCardStore = defineStore('card', () => {
 
-    let dataStore = useDataStore()
-    let cards = dataStore.cards
-    let themes = dataStore.themes
+    let storeData = useDataStore()
+    let cards = storeData.cards
+    let themes = storeData.themes
 
     /**Retourne un nouvel index pour la carte dans la base de données */
     function lastIndex() {
@@ -39,7 +39,7 @@ export const useCardStore = defineStore('card', () => {
         //Récupération du thème associé et ajout de la carte
         themes[themeId].cards.push(id)
 
-        dataStore.save()
+        storeData.save()
     }
 
     /**
@@ -68,7 +68,7 @@ export const useCardStore = defineStore('card', () => {
             delete cards[id]
         }
 
-        dataStore.save()
+        storeData.save()
     }
 
     /**

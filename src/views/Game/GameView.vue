@@ -6,11 +6,13 @@ import { Ref, ref } from 'vue'
 import type { Card, Theme } from '../../model/interface';
 import { useThemeStore } from '../../stores/theme';
 import { useRevisionStore } from '../../stores/revision';
+import { useDataStore } from '../../stores/data';
 import CardCPS from '../../components/Card.vue'
 
-const themeStore = useThemeStore()
-const cardStore = useCardStore()
-const revisionStore = useRevisionStore()
+const storeTheme = useThemeStore()
+const storeCard = useCardStore()
+const storeData = useDataStore()
+const storeRevision = useRevisionStore()
 const props = defineProps({
     id: { type: Number, required: true }
 })
@@ -37,29 +39,46 @@ let cards:number[] = []
 
 let currentLevel = 0
 let card:Ref<Card>;
+let showVerso = ref(false) 
+
 
 //Récupération du thème
-if (themeStore.contain(props.id)) {
+if (storeTheme.contain(props.id)) {
 
-    theme = themeStore.getTheme(props.id)
+    theme = storeTheme.getTheme(props.id)
 
-    //S'il s'agit d'un nouveau jour ajouter des cartes
-    if (getDayDiffWithToday(theme.last_revision)) {
-        revisionStore.addRevisionCard(props.id, 1)
+    if(theme.first_revision === ""){
+        theme.cards_revision[1] = theme.cards
+        theme.first_revision = new Date().toString()
+        console.log("> Initialisation des cartes dans le niveau 0");
     }
 
-    levels = getTodayLevel(themeStore.getTheme(props.id))
+    //S'il s'agit d'un nouveau jour ajouter des cartes
+    if (storeRevision.getDayDiffWithToday(theme.last_revision) != 0 || theme.last_revision === "") {
+        storeRevision.addRevisionCard(props.id, 5)
+        console.log("> Ajout des cartes du jour");
+    }
+
+    levels = storeRevision.getTodayLevel(storeTheme.getTheme(props.id))
+    console.log("> Niveau du jour : ", levels);
 
     //Y'a t'il des cartes à révisé aujourd'hui ? 
-    if (revisionStore.cardForToday(props.id, levels)) {
+    if (storeRevision.cardForToday(props.id, levels)) {
 
         nextLevel()
-        
+        console.log("Carte révision : ", theme.cards_revision);
+        storeData.showData()
+        console.log("Carte révision : ", theme.cards_revision);
+
+        console.log("> Niveau courant : ", currentLevel);
+        console.log("> Carte du niveau : ", cards);
+        card = ref(storeCard.getCard(cards[cards.length -1]))
+
+        console.log("La carte : ", card.value);
 
     } else {
         exit()
     }
-
 
 } else {
     exit()
@@ -89,6 +108,7 @@ function nextLevel() {
 
         //Récupération du dernier niveau
         currentLevel = levels.pop() ?? 0
+        console.log("Next level : Current Level : ", currentLevel);
 
         //Si le niveau est à 0, c'est que la liste est vide, fin de la partie
         if (currentLevel == 0)
@@ -96,11 +116,11 @@ function nextLevel() {
 
         else {
 
-            isEmpty = revisionStore.getCard(props.id, currentLevel).length <= 0
+            isEmpty = storeRevision.getCard(props.id, currentLevel).length <= 0
 
             //Si le niveau courant à des cartes
             if (!isEmpty) {
-                cards = revisionStore.getCard(props.id, currentLevel)
+                cards = storeRevision.getCard(props.id, currentLevel)
             }
         }
 
@@ -110,47 +130,36 @@ function nextLevel() {
         endGame()
 }
 
-/**Retourne le nombre de jour entre la date passé en paramètre et la date du jour */
-function getDayDiffWithToday(date: string) {
-    const startDate = Date.parse(date)
-    const today = Date.parse(new Date().toString())
-
-    const diffTime = Math.abs(today - startDate);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+/**Montre le verso de la carte */
+function showAnswer() {
+    showVerso.value = !showVerso.value
+    console.log("> Verso de la carte : ", showVerso.value);
 }
 
-/**Retourne les niveau à réviser du jour */
-function getTodayLevel(theme: Theme) {
+function answer(cardId:number, isCorrect:boolean){
+    storeRevision.cardAnswer(props.id, cardId, currentLevel, isCorrect )
+    console.log("> Traitement de la réponse");
+    next()
+}
 
-    /**Nombre de jour depuis la première révision */
-    const days = getDayDiffWithToday(theme.first_revision)
+function next() {
 
-    /**Niveau à réviser */
-    const revisionLevels: number[] = []
-
-    //Bouclé sur le nombre de niveau max autorisé par le thème
-    for (let i = 1; i <= theme.max_level; i++) {
-
-        //Pattern irrégulier
-        if (i > 3) {
-            if (revisionStore.daySpace[i].includes(days))
-                revisionLevels.push(i)
-        }
-
-        //Pattern régulier
-        else {
-            if ((days - revisionStore.daySpace[i].start) % revisionStore.daySpace[i].gap == 0)
-                revisionLevels.push(i)
-        }
+    console.log({cards});
+    
+    if (cards.length > 0) {
+        card.value = storeCard.getCard(cards[cards.length -1]) ?? {} as Card
+        console.log(card.value);
+    } else {
+        nextLevel()
     }
 
-    return revisionLevels
+    showVerso.value = false
 }
 
 </script>
 
 <template>
-    <!-- <CardCPS :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto"
+    <CardCPS :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto"
                     :verso="card.verso" />
 
             <div class="btns">
@@ -161,7 +170,7 @@ function getTodayLevel(theme: Theme) {
                 </div>
 
                 <button v-show="!showVerso" v-on:click="showAnswer()">Afficher la carte</button>
-            </div> -->
+            </div>
 </template>
 
 <style scoped lang="scss"></style>
