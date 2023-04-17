@@ -113,11 +113,13 @@ export const useRevisionStore = defineStore('revision', () => {
 
         levels.forEach(level => {
             let cards = getCard(themeId, level)
-            haveCards ||= cards.length <= 0
+            haveCards &&= cards.length >= 0
         })
 
         return haveCards
     }
+
+
 
     /**Retourne le nombre de jour entre la date passé en paramètre et la date du jour */
     function getDayDiffWithToday(date: string) {

@@ -48,9 +48,9 @@ if (storeTheme.contain(props.id)) {
     theme = storeTheme.getTheme(props.id)
 
     if(theme.first_revision === ""){
-        theme.cards_revision[1] = theme.cards
+        theme.cards_revision[0] = Array.from(theme.cards)
         theme.first_revision = new Date().toString()
-        console.log("> Initialisation des cartes dans le niveau 0");
+        console.log("> Initialisation des cartes dans le niveau 0", theme.cards);
     }
 
     //S'il s'agit d'un nouveau jour ajouter des cartes
