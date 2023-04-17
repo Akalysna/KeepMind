@@ -4,68 +4,79 @@ import { Card, DataApp, Theme } from "../model/interface";
 
 export const useDataStore = defineStore('data', () => {
 
-    let data: DataApp = {
-        cards: [],
-        themes: []
-    };
+    //themes : { 1 : {id, nom}}
+
+    let themes = {}
+    let cards = {}
+
+    /**
+     * Normalize les données de l'application
+     * @param themeList Liste des thèmes
+     * @param cardList Liste des cartes
+     */
+    function normalize(themeList:Theme[], cardList:Card[]){
+        
+        themeList.forEach(theme => {
+            themes[theme.id] = theme
+        })
+        cardList.forEach(card => {
+            cards[card.id] = card
+        })
+    }
+
+    /**Sauvegarde les données de l'application*/
+    function save(){
+
+        let data: DataApp = {
+            cards: [],
+            themes: []
+        };
+
+        Object.values(themes).forEach(val => {
+            data.themes.push(val as Theme)
+        });
+        
+        Object.values(cards).forEach(val => {
+            data.cards.push(val as Card)
+        });
+
+        localStorage.setItem("data", JSON.stringify(data))
+
+        console.log("Les données on été sauvegardé : " , data);
+    }
 
     /**Initialisation de la "base de donnée" */
     function init() {
 
-        //Si les données existe dans le local storage les utilisés
+        //Si les données n'existe pas dans le local storage les stocker
         if (localStorage.getItem("data") == null) {
-            data = json
+
             localStorage.setItem("data", JSON.stringify(json))
+            normalize(json.themes as Theme[], json.cards)
+            
         } else {
-            data = JSON.parse(localStorage.getItem("data") || "")
+            let tmpJson = JSON.parse(localStorage.getItem("data") || "")
+            console.log(tmpJson);
+            normalize(tmpJson.themes as Theme[], tmpJson.cards)
         }
 
-        console.log("Données de la BDD : ", data);
+        console.log(themes);
+        console.log(cards);
     }
-
-    /**Retourne les données de l'application. Initialement présent dans le json */
-    function getData() { return data }
 
     /**Supprime définitivement les données de l'application */
     function clearData() {
         localStorage.clear()
-        data = {
-            cards: [],
-            themes: []
-        };
+        
+        themes = {}
+        cards = {}
     }
-
-
-    /**
-     * Met à jour les données des thèmes de l'application 
-     * @param themes Tableau des thèmes de l'application à "sauvegarder"
-     */
-    function updateThemeStorage(themes: Theme[]) {
-        data.themes = themes
-        updateData(data)
-    }
-
-    /**
-     * Met à jour les données des cartes de l'application
-     * @param cards Tableau des cartes de l'application à "sauvegarder"
-     */
-    function updateCardStorage(cards: Card[]) {
-        data.cards = cards
-        updateData(data)
-    }
-
-    /** Met à jour les données de l'application */
-    function updateData(data: DataApp) {
-        localStorage.setItem("data", JSON.stringify(data))
-        return true
-    }
-
 
     /**Retourne le nombre de thème dans l'application */
-    function getThemeCount() { return data.themes.length }
+    function getThemeCount() { return Object.keys(themes).length }
 
     /**Retourne le nombre de carte dans l'application */
-    function getCardCount() { return data.cards.length }
+    function getCardCount() { return Object.keys(cards).length }
 
-    return { init, getData, clearData, updateCardStorage, updateThemeStorage, getCardCount, getThemeCount }
+    return { themes, cards, save, init, clearData, getCardCount, getThemeCount }
 })

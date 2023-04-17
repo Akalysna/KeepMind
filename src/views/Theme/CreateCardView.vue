@@ -6,10 +6,7 @@ import Card from '../../components/Card.vue';
 import TopBar from '../../components/TopBar.vue';
 
 const props = defineProps({
-    id: {
-        type: Number,
-        required: true
-    }
+    id: {type: Number, required: true}
 })
 
 let recto = ref("");
@@ -20,6 +17,7 @@ const storeTheme = useThemeStore()
 const theme = storeTheme.getTheme(props.id)
 const cards: number[] = reactive(theme?.cards || [])
 
+/**Création de la carte */
 function create() {
 
     if (recto.value !== "" && verso.value !== "") {
@@ -55,10 +53,10 @@ function create() {
 
 
         <div class="cards">
-            <Card v-for="(idCard, index) in cards" :key="index"
+            <Card v-for="idCard in cards"
                 :recto="storeCard.getCard(idCard)?.recto || { type: 'text', data: '' }"
-                :verso="storeCard.getCard(idCard)?.verso || { type: 'text', data: '' }" :edit="true" :id=idCard
-                :id-theme=id />
+                :verso="storeCard.getCard(idCard)?.verso || { type: 'text', data: '' }" 
+                :edit="true" :id="idCard" :id-theme="id" />
         </div>
     </div>
 </template>

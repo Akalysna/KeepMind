@@ -5,66 +5,79 @@ import { useDataStore } from './data';
 export const useCardStore = defineStore('card', () => {
 
     let dataStore = useDataStore()
-    let cards = dataStore.getData().cards
-    let themes = dataStore.getData().themes
+    let cards = dataStore.cards
+    let themes = dataStore.themes
 
     /**Retourne un nouvel index pour la carte dans la base de données */
     function lastIndex() {
-        return cards.length == 0 ? 0 : cards.sort((a: Card, b: Card) => b.id - a.id)[0].id + 1
+
+        let lastId = 0
+
+        for(const key in cards) {
+            if(cards[key].id > lastId)
+                lastId = cards[key].id
+        }
+
+        lastId += 1
+        return lastId
     }
 
     /**Créer une nouvelle carte dans le thème passé en paramètre */
-    function createCard(themId: number, recto: CardFace, verso: CardFace) {
+    function createCard(themeId: number, recto: CardFace, verso: CardFace) {
 
         //Index de la futur carte
-        let tmpId = lastIndex()
+        let id = lastIndex()
 
         //Création de la carte
-        cards.push({
-            "id": tmpId,
+        cards[id] = {
+            "id": id,
             "creation_date": new Date().toString(),
             "recto": recto,
             "verso": verso
         }
-        )
 
         //Récupération du thème associé et ajout de la carte
-        themes.find(theme => theme.id == themId)?.cards.push(tmpId)
+        themes[themeId].cards.push(id)
 
-        dataStore.updateCardStorage(cards)
-        dataStore.updateThemeStorage(themes)
-        console.log(dataStore.getData());
+        dataStore.save()
     }
 
-    function deleteCard(id:number, idTheme:number){
+    /**
+     * Supprime la carte du thème. La carte est supprimé si elle n'appartient à aucun thème
+     * @param id Identifiant de la carte
+     * @param themeId Identifiant du thème
+     */
+    function deleteCard(id:number, themeId:number){
 
-        //Supprimer la carte du thème
-        let tmpTheme = themes.find(theme => theme.id == idTheme)
-        if(tmpTheme){
-            //Suppression de la carte si elle existe dans la liste
-            if(tmpTheme.cards.includes(id)){
-                tmpTheme.cards = tmpTheme.cards.filter(num => num != id)
-             }
+        let tmp = themes[themeId]
+
+        if(Object.keys(tmp).length !== 0){
+
+            if(tmp.cards.includes(id))
+                tmp.cards = tmp.cards.filter((num: number) => num !== id)
         }
 
         //Si aucun autre thème à cette carte la supprimé de la liste des cartes
-        let containCard = themes.map(theme => {
-            return theme.cards.every(obj => obj != id)
-        })
+        let haveCard:boolean = false
 
-        if(containCard){
-
-            let index = cards.findIndex(obj => obj.id == id)
-            if(index != -1)
-                cards.splice(index, 1)
+        for (const key in themes) {
+            haveCard ||= themes[key].cards.includes(id)
         }
 
-       dataStore.updateCardStorage(cards)
-       dataStore.updateThemeStorage(themes)
+        if(!haveCard){
+            delete cards[id]
+        }
+
+        dataStore.save()
     }
 
+    /**
+     * Retourne la carte
+     * @param id Identifiant de la carte
+     * @returns 
+     */
     function getCard(id: number) {
-        return cards.find(obj => obj.id == id)
+        return cards[id]
     }
 
     return { createCard, getCard, deleteCard}

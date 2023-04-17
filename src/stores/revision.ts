@@ -20,7 +20,7 @@ export const useRevisionStore = defineStore('revision', ()=> {
 
     /**Sauvegarde des données */
     function saveData(){
-        dataStore.updateThemeStorage(themeStore.getThemes())
+        dataStore.save()
     }
     
     /**
