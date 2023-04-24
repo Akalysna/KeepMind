@@ -1,12 +1,11 @@
 <script setup lang="ts">
 
 import router from '../../router';
-import { useCardStore } from '../../stores/card';
+import { useCardStore } from '../../stores/card/card';
 import { Ref, ref } from 'vue'
 import type { Card, Theme } from '../../model/interface';
-import { useThemeStore } from '../../stores/theme';
-import { useRevisionStore } from '../../stores/revision';
-import { useDataStore } from '../../stores/data';
+import { useThemeStore } from '../../stores/theme/theme';
+import { useGameStore } from '../../stores/game';
 import CardCPS from '../../components/Card.vue'
 import dayjs from 'dayjs'
 
@@ -14,8 +13,8 @@ import dayjs from 'dayjs'
 
 const storeTheme = useThemeStore()
 const storeCard = useCardStore()
-const storeData = useDataStore()
-const storeRevision = useRevisionStore()
+// const storeData = useDataStore()
+const storeGame = useGameStore()
 const props = defineProps({
     id: { type: Number, required: true }
 })

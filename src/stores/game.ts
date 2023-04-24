@@ -1,11 +1,10 @@
 import { defineStore } from "pinia";
-import { useThemeStore } from "./theme";
-import { useDataStore } from "./data";
+import { useThemeStore } from "./theme/theme";
 import { Theme } from "../model/interface";
 
-export const useRevisionStore = defineStore('revision', () => {
+export const useGameStore = defineStore('game', () => {
 
-    const storeData = useDataStore();
+    // const storeData = useDataStore();
     const storeTheme = useThemeStore()
 
     const daySpace = {
@@ -68,7 +67,7 @@ export const useRevisionStore = defineStore('revision', () => {
      */
     function getCard(themeId: number, level: number) {
         let theme: Theme | undefined;
-        return (theme = storeTheme.getTheme(themeId)) ? theme?.cards_revision[level] : []
+        return (theme = storeTheme.get(themeId)) ? theme?.cards_revision[level] : []
     }
 
     function haveCard(themeId: number, level: number){

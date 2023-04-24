@@ -1,19 +1,21 @@
 <script setup lang="ts">
-//Store
-import { useThemeStore } from '../stores/theme'
-import { useDataStore } from '../stores/data';
-//Component
+
+import { useThemeStore } from '../stores/theme/theme'
+import { useAllStore } from '../stores/all';
+import { useCardStore } from '../stores/card/card';
+
 import ThemeItem from "../components/ThemeItem.vue";
 import Stats from '../components/Stats.vue';
 
-const storeData = useDataStore()
-const themeStore = useThemeStore()
-let themes = themeStore.getThemes()
+const storeAll = useAllStore()
+const storeTheme = useThemeStore()
+const storeCard = useCardStore()
 
-function clear(){
-storeData.clearData() 
+let themes = storeTheme.themes
+
+function clear() {
+  storeAll.clearLocalStorage()
 }
-
 </script>
 
 
@@ -22,8 +24,8 @@ storeData.clearData()
     <h1>Keep Mind</h1>
 
     <div class="stats">
-      <Stats :number="storeData.getThemeCount()" name="Themes" />
-      <Stats :number="storeData.getCardCount()" name="Cartes" />
+      <Stats :number="storeTheme.getSize()" name="Themes" />
+      <Stats :number="storeCard.getSize()" name="Cartes" />
       <Stats :number="0" name="Apprise" />
     </div>
   </header>
@@ -55,6 +57,7 @@ header {
     font-size: 3em;
   }
 }
+
 .stats {
   display: flex;
   flex-direction: row;
@@ -66,6 +69,7 @@ header {
 section {
   margin: 1em 1.5em;
 }
+
 .themes {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCardStore } from '../stores/card';
+import { useCardStore } from '../stores/card/card';
 import { CardFace } from '../model/interface'
 import { PropType } from 'vue';
 import { ref } from 'vue'

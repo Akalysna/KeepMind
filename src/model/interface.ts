@@ -5,9 +5,16 @@ export interface Theme {
     creation_date: string,
     cards: number[],
     max_level: number,
+    
+}
+
+export interface Revision{
+    id:number, 
+    theme_id:number,
+    level:number[],
     last_revision: string,
     first_revision:string,
-    cards_revision: [number[], number[], number[], number[], number[], number[], number[], number[]]
+    cards_revision: [number[], number[], number[], number[], number[], number[], number[]]
 }
 
 export interface CardFace {

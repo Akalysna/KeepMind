@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useThemeStore } from "../stores/theme"
+import { useThemeStore } from "../stores/theme/theme"
 import { Theme } from "../model/interface";
 import type { PropType } from 'vue'
 import { useRouter } from 'vue-router'
@@ -24,7 +24,7 @@ function goTo() {
     <!-- Info du thème -->
     <div class="theme-item-info">
       <h2>{{ theme.name }}</h2>
-      <p>{{ theme.last_revision }}</p>
+      <!-- <p>{{ theme.last_revision }}</p> -->
     </div>
 
     <!-- Nombre de carte -->

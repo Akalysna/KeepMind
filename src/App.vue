@@ -1,10 +1,16 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { useDataStore } from './stores/data';
+import { useThemeStore } from './stores/theme/theme';
+import { useCardStore } from './stores/card/card';
+import { useRevisionStore } from './stores/revision/revision';
 
-const store = useDataStore()
-store.init()
-// store.clearData() 
+const storeTheme = useThemeStore()
+const storeCard = useCardStore()
+const storeRevision = useRevisionStore()
+
+storeTheme.init()
+storeCard.init()
+storeRevision.init()
 
 </script>
 

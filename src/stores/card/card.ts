@@ -1,12 +1,29 @@
-import { Card, CardFace } from './../model/interface';
+import { CardFace } from '../../model/interface';
 import { defineStore } from "pinia";
-import { useDataStore } from './data';
+import { useAllStore } from '../all';
+import { useThemeStore } from '../theme/theme';
+import json from './card.json'
 
+/**Store des cartes de l'application */
 export const useCardStore = defineStore('card', () => {
+    
+    const storeAll = useAllStore()
+    const storeTheme = useThemeStore()
+    let themes = storeTheme.themes
+    let cards = {}
+    
+    const localStorageKey = storeAll.appPrefixName + "card"
 
-    let storeData = useDataStore()
-    let cards = storeData.cards
-    let themes = storeData.themes
+    function init(){ cards = storeAll.init(localStorageKey, json) }
+
+    function save(){
+        storeAll.save(localStorageKey, cards)
+        storeTheme.save()
+    }
+
+    function getSize(){
+        return Object.keys(cards).length 
+    }
 
     /**Retourne un nouvel index pour la carte dans la base de données */
     function lastIndex() {
@@ -39,7 +56,7 @@ export const useCardStore = defineStore('card', () => {
         //Récupération du thème associé et ajout de la carte
         themes[themeId].cards.push(id)
 
-        storeData.save()
+        save()
     }
 
     /**
@@ -68,7 +85,7 @@ export const useCardStore = defineStore('card', () => {
             delete cards[id]
         }
 
-        storeData.save()
+        save()
     }
 
     /**
@@ -76,9 +93,9 @@ export const useCardStore = defineStore('card', () => {
      * @param id Identifiant de la carte
      * @returns 
      */
-    function getCard(id: number) {
+    function get(id: number) {
         return cards[id]
     }
 
-    return { createCard, getCard, deleteCard}
+    return { init, cards, getSize, createCard, get, deleteCard}
 })
