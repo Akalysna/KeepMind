@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useDataStore } from "./data";
+import { Theme } from "../model/interface";
 
 export const useThemeStore = defineStore('theme', ()=> {
 
@@ -22,7 +23,7 @@ export const useThemeStore = defineStore('theme', ()=> {
      * @param id Identifiant du thème
      * @returns Theme
      */
-    function getTheme(id:number){ return themes[id] }
+    function getTheme(id:number){ return themes[id] as Theme }
 
     /**
      * Retourne le nombre de carte que possède le thème

@@ -25,7 +25,8 @@ export const useRevisionStore = defineStore('revision', () => {
 
     /**
      * Ajoute des cartes de révision au thème en fonction 
-     * du nombre de carte défini par l'utilisateur
+     * du nombre de carte défini par l'utilisateur.
+     * Met a jour la date de la dernière révision
      * @param themeId Identifiant du thème
      */
     function addRevisionCard(themeId: number, nbCard: number = 1) {
@@ -70,6 +71,10 @@ export const useRevisionStore = defineStore('revision', () => {
         return (theme = storeTheme.getTheme(themeId)) ? theme?.cards_revision[level] : []
     }
 
+    function haveCard(themeId: number, level: number){
+        return getCard(themeId, level).length !== 0
+    }
+
     /**
      * Met à jour la position de la carte. Si l'utilisateur a une bonne reponse la carte passe au niveau suivant. Sinon elle retourne au niveau 1
      * @param cardId Identifiant de la carte
@@ -109,11 +114,11 @@ export const useRevisionStore = defineStore('revision', () => {
     /**Vérifie s'il y a des cartes à réviser */
     function cardForToday(themeId: number, levels: number[]) {
 
-        let haveCards = true
+        let haveCards = false
 
         levels.forEach(level => {
             let cards = getCard(themeId, level)
-            haveCards &&= cards.length >= 0
+            haveCards ||= cards.length >= 0
         })
 
         return haveCards
@@ -131,34 +136,42 @@ export const useRevisionStore = defineStore('revision', () => {
     }
 
     /**Retourne les niveau à réviser du jour */
-    function getTodayLevel(theme: Theme) {
+    function getTodayLevel(themeId: number) {
 
-        /**Nombre de jour depuis la première révision */
-        const days = getDayDiffWithToday(theme.first_revision)
+        let theme: Theme | undefined;
 
-        /**Niveau à réviser */
-        const revisionLevels: number[] = []
+        if (theme = storeTheme.getTheme(themeId)) {
 
-        //Bouclé sur le nombre de niveau max autorisé par le thème
-        for (let i = 1; i <= theme.max_level; i++) {
+             /**Nombre de jour depuis la première révision */
+            const days = getDayDiffWithToday(theme.first_revision)
 
-            //Pattern irrégulier
-            if (i > 3) {
-                if (daySpace[i].includes(days))
-                    revisionLevels.push(i)
+            /**Niveau à réviser */
+            const revisionLevels: number[] = []
+    
+            //Bouclé sur le nombre de niveau max autorisé par le thème
+            for (let i = 1; i <= theme.max_level; i++) {
+    
+                //Pattern irrégulier
+                if (i > 3) {
+                    if (daySpace[i].includes(days))
+                        revisionLevels.push(i)
+                }
+    
+                //Pattern régulier
+                else {
+                    if ((days - daySpace[i].start) % daySpace[i].gap == 0)
+                        revisionLevels.push(i)
+                }
             }
+    
+            return revisionLevels
 
-            //Pattern régulier
-            else {
-                if ((days - daySpace[i].start) % daySpace[i].gap == 0)
-                    revisionLevels.push(i)
-            }
+        } else {
+            return []
         }
-
-        return revisionLevels
     }
 
 
 
-    return { addRevisionCard, getCard, cardAnswer, cardForToday, daySpace, getDayDiffWithToday, getTodayLevel}
+    return { haveCard, addRevisionCard, getCard, cardAnswer, cardForToday, daySpace, getDayDiffWithToday, getTodayLevel}
 })

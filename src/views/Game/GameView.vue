@@ -8,6 +8,9 @@ import { useThemeStore } from '../../stores/theme';
 import { useRevisionStore } from '../../stores/revision';
 import { useDataStore } from '../../stores/data';
 import CardCPS from '../../components/Card.vue'
+import dayjs from 'dayjs'
+
+
 
 const storeTheme = useThemeStore()
 const storeCard = useCardStore()
@@ -33,144 +36,138 @@ Déroulement du niveau
 
 //___________________________________________________________
 
-let theme:Theme = {} as Theme;
-let levels:number[] = []
-let cards:number[] = []
+let daySpace = 0
 
-let currentLevel = 0
-let card:Ref<Card>;
-let showVerso = ref(false) 
+/**Tableau contenant l'identifiant des cartes du jour */
+let daysCardId: number[] = []
+let daysLevel: number[] = []
+let showVerso = ref(false)
+let level = 0
 
+let theme: Theme = {} as Theme;
+let card: Ref<Card> = ref({} as Card)
 
-//Récupération du thème
-if (storeTheme.contain(props.id)) {
+storeData.showData()
 
-    theme = storeTheme.getTheme(props.id)
+if (theme = storeTheme.getTheme(props.id)) {
 
-    if(theme.first_revision === ""){
-        theme.cards_revision[0] = Array.from(theme.cards)
+    //Première révision
+    if (theme.first_revision === "") {
+        console.log("Première révision");
+
         theme.first_revision = new Date().toString()
-        console.log("> Initialisation des cartes dans le niveau 0", theme.cards);
+        storeTheme.save()
     }
 
-    //S'il s'agit d'un nouveau jour ajouter des cartes
-    if (storeRevision.getDayDiffWithToday(theme.last_revision) != 0 || theme.last_revision === "") {
-        storeRevision.addRevisionCard(props.id, 5)
-        console.log("> Ajout des cartes du jour");
+    //Nombre de jour entre la première révision et aujourd'hui 
+    daySpace = dayjs().diff(theme.first_revision, 'day')
+
+    console.log(daySpace);
+
+    //Ajout de carte en plus
+    if (daySpace > 0) {
+        console.log("Ajout de nouvelles cartes");
+        storeRevision.addRevisionCard(props.id)
     }
 
-    levels = storeRevision.getTodayLevel(storeTheme.getTheme(props.id))
-    console.log("> Niveau du jour : ", levels);
+    //Vérifier s'il y a des cartes a révisé 
 
-    //Y'a t'il des cartes à révisé aujourd'hui ? 
-    if (storeRevision.cardForToday(props.id, levels)) {
+    /**Tableau contenant les niveaux du jour à révisé */
+    daysLevel = storeRevision.getTodayLevel(props.id)
 
-        nextLevel()
-        console.log("Carte révision : ", theme.cards_revision);
-        storeData.showData()
-        console.log("Carte révision : ", theme.cards_revision);
+    if (daysLevel.length !== 0) {
 
-        console.log("> Niveau courant : ", currentLevel);
-        console.log("> Carte du niveau : ", cards);
-        card = ref(storeCard.getCard(cards[cards.length -1]))
+        if (storeRevision.cardForToday(props.id, daysLevel)) {
 
-        console.log("La carte : ", card.value);
+            nextLevel()
+            nextCard()
+
+        } else {
+            exit("Il n'y pas de carte a réviser pour aujourd'hui")
+        }
 
     } else {
-        exit()
+        exit("Pas de carte à réviser")
     }
 
 } else {
-    exit()
+    exit("Le theme n'existe pas")
 }
 
-//_______________________________________________________
-//_______________________________________________________
-//_______________________________________________________
-
-function exit() {
+function exit(message: string) {
+    console.log(message);
     router.go(-1)
+}
+
+function nextCard() {
+    if (daysCardId.length > 0) {
+        let id = daysCardId[daysCardId.length - 1]
+        if (id > 0)
+            card.value = storeCard.getCard(id)
+        else
+            endGame()
+    }
+    else
+        nextLevel()
+}
+
+function nextLevel() {
+
+    //Tant qu'il reste des niveaux et qu'il n'y a pas de carte dans le niveau 
+    let haveCard = false
+    console.log(daysLevel);
+
+    do {
+
+        level = daysLevel.pop() ?? 0
+        console.log(level);
+        if (level && level !== 0) {
+
+            haveCard = storeRevision.haveCard(props.id, level)
+            console.log(haveCard);
+            if (haveCard) {
+                daysCardId = storeRevision.getCard(props.id, level)
+            }
+
+        } else {
+            endGame()
+        }
+
+    } while (daysLevel.length > 0 && !haveCard);
 }
 
 function endGame() {
-    console.log("End game")
-    router.go(-1)
+    exit("Fin de la révision. End Game")
 }
 
-/**Passe carte du niveau suivant s'il en reste. Sinon endGame */
-function nextLevel() {
 
-    let isEndGame: boolean = false;
-    let isEmpty = true
-
-    //Tant que le niveau courant est vide et qu'il reste des cartes
-    do {
-
-        //Récupération du dernier niveau
-        currentLevel = levels.pop() ?? 0
-        console.log("Next level : Current Level : ", currentLevel);
-
-        //Si le niveau est à 0, c'est que la liste est vide, fin de la partie
-        if (currentLevel == 0)
-            isEndGame = true
-
-        else {
-
-            isEmpty = storeRevision.getCard(props.id, currentLevel).length <= 0
-
-            //Si le niveau courant à des cartes
-            if (!isEmpty) {
-                cards = storeRevision.getCard(props.id, currentLevel)
-            }
-        }
-
-    } while (isEmpty && levels.length > 0);
-
-    if(isEndGame)
-        endGame()
-}
 
 /**Montre le verso de la carte */
 function showAnswer() {
     showVerso.value = !showVerso.value
-    console.log("> Verso de la carte : ", showVerso.value);
+    console.log("showVerso : ", showVerso.value);
 }
 
-function answer(cardId:number, isCorrect:boolean){
-    storeRevision.cardAnswer(props.id, cardId, currentLevel, isCorrect )
-    console.log("> Traitement de la réponse");
-    next()
-}
-
-function next() {
-
-    console.log({cards});
-    
-    if (cards.length > 0) {
-        card.value = storeCard.getCard(cards[cards.length -1]) ?? {} as Card
-        console.log(card.value);
-    } else {
-        nextLevel()
-    }
-
-    showVerso.value = false
+function answer(cardId: number, isCorrect: boolean) {
+    console.log(cardId);
+    storeRevision.cardAnswer(props.id, cardId, level, isCorrect)
+    nextCard()
 }
 
 </script>
 
 <template>
-    <CardCPS :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto"
-                    :verso="card.verso" />
+    <CardCPS :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto" :verso="card.verso" />
 
-            <div class="btns">
+    <div class="btns">
 
-                <div v-show="showVerso" class="btns-answer">
-                    <button v-on:click="answer(card.id, false)">Faux</button>
-                    <button v-on:click="answer(card.id, true)">Juste</button>
-                </div>
+        <div v-show="showVerso" class="btns-answer">
+            <button v-on:click="answer(card.id, false)">Faux</button>
+            <button v-on:click="answer(card.id, true)">Juste</button>
+        </div>
 
-                <button v-show="!showVerso" v-on:click="showAnswer()">Afficher la carte</button>
-            </div>
+        <button v-show="!showVerso" v-on:click="showAnswer()">Afficher la carte</button>
+    </div>
 </template>
 
 <style scoped lang="scss"></style>
