@@ -19,6 +19,12 @@ export const useRevisionStore = defineStore('revision', () => {
     function getSize(){
         return Object.keys(revision).length 
     }
+
+    function get(id:number){
+        return revision[id]
+    }
+
+    function contain(id:number){ return revision[id] ? true : false }
     
-    return { init, save, getSize }
+    return { init, save, getSize, get, contain }
 })

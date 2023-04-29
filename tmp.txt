@@ -73,7 +73,7 @@ if (theme.first_revision == "")
 
 if (getDayDiffWithToday(theme.last_revision) != 0) {
     // Fonctionne
-    // gameStore.addRevisionCard(props.id)
+    // gameStore.addCard(props.id)
 }
 
 nextLevel()

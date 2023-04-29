@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { useThemeStore } from "../stores/theme/theme"
-import { Theme } from "../model/interface";
 import type { PropType } from 'vue'
 import { useRouter } from 'vue-router'
+import { Theme } from "../model/interface";
+import { useThemeStore } from "../stores/theme/theme"
+import { useRevisionStore } from '../stores/revision/revision';
 
 const props = defineProps({
   theme: { type: Object as PropType<Theme>, required: true }
 })
 
 const storeTheme = useThemeStore()
+const storeRevision = useRevisionStore()
 const router = useRouter()
 
 /**Navigue vers la page de détail du thème */
@@ -24,7 +26,7 @@ function goTo() {
     <!-- Info du thème -->
     <div class="theme-item-info">
       <h2>{{ theme.name }}</h2>
-      <!-- <p>{{ theme.last_revision }}</p> -->
+      <p>{{ storeRevision.getRevision(theme.id).last_revision }}</p>
     </div>
 
     <!-- Nombre de carte -->

@@ -1,16 +1,16 @@
 export interface Theme {
     id: number,
+    revision_id:number,
     name: string,
     description: string,
     creation_date: string,
     cards: number[],
     max_level: number,
-    
 }
 
 export interface Revision{
-    id:number, 
-    theme_id:number,
+    id:number,
+    new_cards:number,
     level:number[],
     last_revision: string,
     first_revision:string,

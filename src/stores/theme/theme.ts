@@ -10,7 +10,12 @@ export const useThemeStore = defineStore('theme', ()=> {
     let themes = {}
 
     /**Initialisation des thèmes de l'application */
-    function init(){ themes = storeAll.init(localStorageKey, json) }
+    function init(){ 
+        console.log(json);
+        themes = storeAll.init(localStorageKey, json) 
+
+        console.log(themes);
+    }
 
     /**Sauvegarde des données de l'application */
     function save(){ storeAll.save(localStorageKey, themes) }
@@ -38,5 +43,9 @@ export const useThemeStore = defineStore('theme', ()=> {
         return get(id)?.cards.length || 0
     }
 
-    return {init, themes, get, getSize, getCardCount, contain, save}
+    function getThemes(){
+        return themes
+    }
+
+    return {init,getThemes,  themes, get, getSize, getCardCount, contain, save}
 })

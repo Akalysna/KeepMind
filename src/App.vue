@@ -8,6 +8,7 @@ const storeTheme = useThemeStore()
 const storeCard = useCardStore()
 const storeRevision = useRevisionStore()
 
+//Initialisation de la base de données
 storeTheme.init()
 storeCard.init()
 storeRevision.init()
@@ -15,14 +16,6 @@ storeRevision.init()
 </script>
 
 <template>
-  <!-- <RouterView v-slot="{Component, route }" >
-    <Transition :name="fade">
-      <div>
-        <component :is="Component"/>
-      </div>
-    </Transition>
-  </RouterView> -->
-  
   <RouterView/>
 </template>
 

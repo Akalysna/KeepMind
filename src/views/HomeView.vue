@@ -1,28 +1,35 @@
 <script setup lang="ts">
 
-import { useThemeStore } from '../stores/theme/theme'
-import { useAllStore } from '../stores/all';
-import { useCardStore } from '../stores/card/card';
-
 import ThemeItem from "../components/ThemeItem.vue";
 import Stats from '../components/Stats.vue';
+
+import { useThemeStore } from '../stores/theme/theme'
+import { useCardStore } from '../stores/card/card';
+import { useAllStore } from '../stores/all';
 
 const storeAll = useAllStore()
 const storeTheme = useThemeStore()
 const storeCard = useCardStore()
 
-let themes = storeTheme.themes
+////////////////////////////////////////////
 
+/**Themes de l'application */
+let themes = storeTheme.getThemes()
+
+/**Supprime les données de l'application */
 function clear() {
   storeAll.clearLocalStorage()
 }
+
 </script>
 
 
 <template>
+
   <header>
     <h1>Keep Mind</h1>
 
+    <!-- Statistique sur le nombre de cartes, de themes et de cartes apprise -->
     <div class="stats">
       <Stats :number="storeTheme.getSize()" name="Themes" />
       <Stats :number="storeCard.getSize()" name="Cartes" />
@@ -35,9 +42,11 @@ function clear() {
   <section>
     <h2>Mes thèmes</h2>
 
+    <!-- Liste des thèmes de l'application -->
     <div class="themes">
       <ThemeItem v-for="item in themes" :theme="item" />
     </div>
+
   </section>
 </template>
 

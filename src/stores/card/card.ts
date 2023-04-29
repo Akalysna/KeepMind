@@ -9,12 +9,15 @@ export const useCardStore = defineStore('card', () => {
     
     const storeAll = useAllStore()
     const storeTheme = useThemeStore()
-    let themes = storeTheme.themes
+    let themes = {}
     let cards = {}
     
     const localStorageKey = storeAll.appPrefixName + "card"
 
-    function init(){ cards = storeAll.init(localStorageKey, json) }
+    function init(){ 
+        cards = storeAll.init(localStorageKey, json) 
+        themes = storeTheme.getThemes()
+    }
 
     function save(){
         storeAll.save(localStorageKey, cards)
@@ -52,6 +55,8 @@ export const useCardStore = defineStore('card', () => {
             "recto": recto,
             "verso": verso
         }
+
+        console.log(themes[themeId]);
 
         //Récupération du thème associé et ajout de la carte
         themes[themeId].cards.push(id)
@@ -97,5 +102,11 @@ export const useCardStore = defineStore('card', () => {
         return cards[id]
     }
 
-    return { init, cards, getSize, createCard, get, deleteCard}
+    function getCards(){
+        return cards
+    }
+
+    function contain(id:number){ return cards[id] ? true : false }
+
+    return { init, save, getCards, getSize, createCard, get, deleteCard, contain}
 })

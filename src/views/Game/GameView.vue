@@ -3,18 +3,16 @@
 import router from '../../router';
 import { useCardStore } from '../../stores/card/card';
 import { Ref, ref } from 'vue'
-import type { Card, Theme } from '../../model/interface';
+import type { Card, Revision, Theme } from '../../model/interface';
 import { useThemeStore } from '../../stores/theme/theme';
 import { useGameStore } from '../../stores/game';
 import CardCPS from '../../components/Card.vue'
 import dayjs from 'dayjs'
 
-
-
 const storeTheme = useThemeStore()
 const storeCard = useCardStore()
-// const storeData = useDataStore()
 const storeGame = useGameStore()
+
 const props = defineProps({
     id: { type: Number, required: true }
 })
@@ -44,11 +42,11 @@ let showVerso = ref(false)
 let level = 0
 
 let theme: Theme = {} as Theme;
+let revision: Revision = {} as Revision
 let card: Ref<Card> = ref({} as Card)
 
-storeData.showData()
 
-if (theme = storeTheme.getTheme(props.id)) {
+if (theme = storeTheme.get(props.id)) {
 
     //Première révision
     if (theme.first_revision === "") {
@@ -66,7 +64,7 @@ if (theme = storeTheme.getTheme(props.id)) {
     //Ajout de carte en plus
     if (daySpace > 0) {
         console.log("Ajout de nouvelles cartes");
-        storeRevision.addRevisionCard(props.id)
+        storeRevision.addCard(props.id)
     }
 
     //Vérifier s'il y a des cartes a révisé 

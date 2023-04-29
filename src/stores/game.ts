@@ -1,11 +1,16 @@
 import { defineStore } from "pinia";
 import { useThemeStore } from "./theme/theme";
-import { Theme } from "../model/interface";
+import { useRevisionStore } from "./revision/revision";
+import { useCardStore } from "./card/card";
+import { Revision, Theme } from "../model/interface";
+import dayjs from 'dayjs'
 
 export const useGameStore = defineStore('game', () => {
 
     // const storeData = useDataStore();
     const storeTheme = useThemeStore()
+    const storeRevision = useRevisionStore()
+    const storeCard = useCardStore()
 
     const daySpace = {
         1: { start: 1, gap: 1 },
@@ -18,8 +23,17 @@ export const useGameStore = defineStore('game', () => {
     }
 
     /**Sauvegarde des données */
-    function saveData() {
-        storeData.save()
+    function save() {
+        storeCard.save()
+        storeRevision.save()
+        storeTheme.save()
+    }
+
+    function revision(id: number) {
+        let theme: Theme | undefined;
+        let revision: Revision | undefined
+        theme = storeTheme.get(id)
+        return storeRevision.get(theme.revision_id)
     }
 
     /**
@@ -28,50 +42,61 @@ export const useGameStore = defineStore('game', () => {
      * Met a jour la date de la dernière révision
      * @param themeId Identifiant du thème
      */
-    function addRevisionCard(themeId: number, nbCard: number = 1) {
+    function addCard(themeId: number) {
 
         let theme: Theme | undefined;
+        let revision: Revision | undefined
 
-        //Vérifi si le theme existe
-        if (theme = storeTheme.getTheme(themeId)) {
+        //Vérifi si le theme et la révision existe
+        if ((theme = storeTheme.get(themeId)) && (revision = storeRevision.get(theme.revision_id))) {
 
-            let length = theme.cards_revision[0].length
-            console.log({nbCard});
+            let length = revision.cards_revision[0].length
+            let nbCard = revision.new_cards
 
-            //S'il reste au moins X cartes
-            // if (length >= nbCard){
-               // theme.cards_revision[1].push(...theme.cards_revision[0].splice(0, nbCard))
-               // theme.cards_revision[1] = theme.cards_revision[1].concat(theme.cards_revision[0].splice(0, nbCard  + 1))
-               for(let tmp = 0; tmp < nbCard; tmp++) {
-                    theme.cards_revision[1].push(theme.cards_revision[0].shift() ?? 0)
-               } 
-            // }
-            // else if (length != 0)
-            //     theme.cards_revision[1].push(...theme.cards_revision[0].splice(0, length))
+            // S'il reste au moins X cartes
+            if (length >= nbCard)
+                revision.cards_revision[1].push(...revision.cards_revision[0].splice(0, nbCard))
 
-                console.log("Theme niveau 1 : ", theme.cards_revision[1]);
+            else
+                revision.cards_revision[1].push(...revision.cards_revision[0].splice(0, length))
+
+
             // Mise à jour de la dernière révision
-            theme.last_revision = new Date().toString()
-            saveData()
+            revision.last_revision = new Date().toString()
+            save()
 
         } else {
-            console.log("error");
+            console.log("Le thème ou la révision n'existe pas");
         }
     }
 
     /**
-     * Retourne les cartes d'un niveau du thème 
+     * Retourne les cartes du niveau d'un thème 
      * @param themeId Identifiant du thème
      * @param level Niveau à récupérer
      * @returns Liste des cartes du niveau
      */
-    function getCard(themeId: number, level: number) {
+    function getLevelCards(themeId: number, level: number) {
+
         let theme: Theme | undefined;
-        return (theme = storeTheme.get(themeId)) ? theme?.cards_revision[level] : []
+        let revision: Revision | undefined;
+
+        if (storeTheme.contain(themeId)) {
+            theme = storeTheme.get(themeId)
+
+            if (storeRevision.contain(theme.revision_id)) {
+                revision = storeRevision.get(theme.revision_id)
+                return revision?.cards_revision[level] ?? []
+            }
+
+            return []
+        }
+
+        return []
     }
 
-    function haveCard(themeId: number, level: number){
-        return getCard(themeId, level).length !== 0
+    function haveCard(themeId: number, level: number) {
+        return getLevelCards(themeId, level).length !== 0
     }
 
     /**
@@ -81,33 +106,36 @@ export const useGameStore = defineStore('game', () => {
      */
     function cardAnswer(themeId: number, cardId: number, level: number, isCorrectAnswer: boolean) {
 
-        let theme: Theme | undefined;
+        let theme: Theme;
+        let revision: Revision;
 
-        if (theme = storeTheme.getTheme(themeId)) {
-            
-            /**Index de la carte dans le niveau */
-            let cardIndex = theme.cards_revision[level].indexOf(cardId)
+        if (storeTheme.contain(themeId)) {
+            theme = storeTheme.get(themeId)
 
-            console.log(theme.cards_revision[level]);
-            console.log("Remove Card. Level : " + level + ", cardIndex : " + cardIndex);
-            //Suppression de la carte de son niveau
-            theme.cards_revision[level].splice(cardIndex, 1)
+            if (storeRevision.contain(theme.revision_id)) {
 
-            //Passage de la carte au niveau supperieur si correct sinon retour au niveau 1
-            if (isCorrectAnswer) {
-                //Ajouter la carte dans le niveau suivant si elle existe
-                if (level < 7) {
-                    theme.cards_revision[level + 1].push(cardId)
+                revision = storeRevision.get(theme.revision_id) || {} as Revision
+
+                /**Index de la carte dans le niveau */
+                let cardIndex = revision.cards_revision[level].indexOf(cardId)
+
+                //Suppression de la carte de son niveau
+                revision.cards_revision[level].splice(cardIndex, 1)
+
+                //Passage de la carte au niveau supperieur si correct sinon retour au niveau 1
+                if (isCorrectAnswer) {
+                    //Ajouter la carte dans le niveau suivant si elle existe
+                    if (level < 7) {
+                        revision.cards_revision[level + 1].push(cardId)
+                    }
+
+                } else {
+                    revision.cards_revision[1].push(cardId)
                 }
+
+                save()
             }
-
-            else
-                theme.cards_revision[1].push(cardId)
-
-            saveData()
-
-        } else 
-        console.log("Error");
+        }
     }
 
     /**Vérifie s'il y a des cartes à réviser */
@@ -116,61 +144,56 @@ export const useGameStore = defineStore('game', () => {
         let haveCards = false
 
         levels.forEach(level => {
-            let cards = getCard(themeId, level)
+            let cards = getLevelCards(themeId, level)
             haveCards ||= cards.length >= 0
         })
 
         return haveCards
     }
 
-
-
-    /**Retourne le nombre de jour entre la date passé en paramètre et la date du jour */
-    function getDayDiffWithToday(date: string) {
-        const startDate = Date.parse(date)
-        const today = Date.parse(new Date().toString())
-
-        const diffTime = Math.abs(today - startDate);
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    }
-
     /**Retourne les niveau à réviser du jour */
     function getTodayLevel(themeId: number) {
 
-        let theme: Theme | undefined;
+        let theme: Theme;
+        let revision: Revision;
 
-        if (theme = storeTheme.getTheme(themeId)) {
+        if (storeTheme.contain(themeId)) {
+            theme = storeTheme.get(themeId)
 
-             /**Nombre de jour depuis la première révision */
-            const days = getDayDiffWithToday(theme.first_revision)
+            if (storeRevision.contain(theme.revision_id)) {
+                revision = storeRevision.get(theme.revision_id)
 
-            /**Niveau à réviser */
-            const revisionLevels: number[] = []
-    
-            //Bouclé sur le nombre de niveau max autorisé par le thème
-            for (let i = 1; i <= theme.max_level; i++) {
-    
-                //Pattern irrégulier
-                if (i > 3) {
-                    if (daySpace[i].includes(days))
-                        revisionLevels.push(i)
+                /**Nombre de jour depuis la première révision */
+                const days = dayjs().diff(revision.first_revision, 'day')
+
+                /**Niveau à réviser */
+                const revisionLevels: number[] = []
+
+                //Bouclé sur le nombre de niveau max autorisé par le thème
+                for (let i = 1; i <= theme.max_level; i++) {
+
+                    //Pattern irrégulier
+                    if (i > 3) {
+                        if (daySpace[i].includes(days))
+                            revisionLevels.push(i)
+                    }
+
+                    //Pattern régulier
+                    else {
+                        if ((days - daySpace[i].start) % daySpace[i].gap == 0)
+                            revisionLevels.push(i)
+                    }
                 }
-    
-                //Pattern régulier
-                else {
-                    if ((days - daySpace[i].start) % daySpace[i].gap == 0)
-                        revisionLevels.push(i)
-                }
+
+                return revisionLevels
+
+            } else {
+                return []
             }
-    
-            return revisionLevels
-
-        } else {
-            return []
         }
     }
 
 
 
-    return { haveCard, addRevisionCard, getCard, cardAnswer, cardForToday, daySpace, getDayDiffWithToday, getTodayLevel}
+    return { haveCard, addCard, getLevelCards, cardAnswer, cardForToday, daySpace, getTodayLevel }
 })
