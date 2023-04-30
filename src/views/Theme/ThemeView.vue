@@ -57,13 +57,17 @@ function goToRevision() {
 
 <style scoped lang="scss">
 
+p{
+    font-size: 1.2em;
+}
+
 .btns{
     display: flex;
     justify-content: space-around;
     align-items: center;
     gap: 2em;
 
-    margin: 1em 0 1.8em 0;
+    margin: 2em 0 1.8em 0;
 
     button{
         padding: 0.8em;

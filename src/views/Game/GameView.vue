@@ -99,6 +99,8 @@ if (theme = storeTheme.get(props.id)) {
         storeGame.addCard(revisionId)
     }
 
+    storeAll.showData(storeAll.appPrefixName + "revision")
+
     //Vérifier s'il y a des cartes a révisé 
     daysLevel = storeGame.getTodayLevel(props.id).filter(v => !revision.level.includes(v))
 
@@ -108,7 +110,6 @@ if (theme = storeTheme.get(props.id)) {
 
             countCard = storeGame.countAllCard(props.id, daysLevel)
 
-            storeAll.showData(storeAll.appPrefixName + "revision")
             nextLevel()
             nextCard()
 
@@ -239,7 +240,7 @@ function answer(cardId: number, isCorrect: boolean) {
 .btns{
     display: flex;
     justify-content: center;
-    position: absolute;
+    position: fixed;
     bottom: 3em;
     left: 0;
     right: 0;

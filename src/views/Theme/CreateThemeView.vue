@@ -95,7 +95,7 @@ function exit(){
     padding: 0 1.5em;
     display: flex;
     justify-content: center;
-    position: absolute;
+    position: fixed;
     bottom: 3em;
     left: 0;
     right: 0;

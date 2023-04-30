@@ -1,4 +1,4 @@
-import { Theme } from "../../model/interface";
+import { Revision, Theme } from "../../model/interface";
 import { defineStore } from "pinia";
 import { useAllStore } from "../all";
 import json from './theme.json'
@@ -59,6 +59,17 @@ export const useThemeStore = defineStore('theme', ()=> {
         return lastId
     }
 
+    function addCard(themeId:number,  cardId:number){
+        let theme:Theme = themes[themeId]
+        let revision:Revision = storeRevision.get(theme.revision_id)
+
+        theme.cards.push(cardId)
+        revision.cards_revision[0].push(cardId)
+
+        save()
+        storeRevision.save()
+    }
+
     function createTheme(name:string, description:string, level:number){
 
         //Index de la futur carte
@@ -82,5 +93,5 @@ export const useThemeStore = defineStore('theme', ()=> {
     }
 
 
-    return {init,getThemes,  themes, get, getSize, getCardCount, contain, save, createTheme}
+    return {init,getThemes,  themes, get, getSize, getCardCount, contain, save, createTheme, addCard}
 })

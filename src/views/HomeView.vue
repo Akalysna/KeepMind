@@ -7,6 +7,7 @@ import { useThemeStore } from '../stores/theme/theme'
 import { useCardStore } from '../stores/card/card';
 import { useAllStore } from '../stores/all';
 import router from "../router";
+import Navbar from "../components/Navbar.vue";
 
 const storeAll = useAllStore()
 const storeTheme = useThemeStore()
@@ -55,7 +56,9 @@ function createTheme() {
 
   </section>
 
-  <button v-on:click="createTheme()">+</button>
+  <!-- <button v-on:click="createTheme()">+</button> -->
+
+  <Navbar />
 </template>
 
 <style scoped lang="scss">

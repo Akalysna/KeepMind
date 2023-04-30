@@ -59,7 +59,7 @@ export const useCardStore = defineStore('card', () => {
         console.log(themes[themeId]);
 
         //Récupération du thème associé et ajout de la carte
-        themes[themeId].cards.push(id)
+        storeTheme.addCard(themeId, id)
 
         save()
     }

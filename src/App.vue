@@ -36,6 +36,10 @@ storeRevision.init()
   font-size: 20px;
 }
 
+.icon {
+  stroke:#171717
+}
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
