@@ -147,6 +147,16 @@ export const useGameStore = defineStore('game', () => {
         return haveCards
     }
 
+    function countAllCard(themeId: number, levels: number[]){
+        let count = 0
+
+        levels.forEach(level => {
+            count += getLevelCards(themeId, level).length
+        })
+
+        return count
+    }
+
     /**Retourne les niveau à réviser du jour */
     function getTodayLevel(themeId: number) {
 
@@ -193,5 +203,5 @@ export const useGameStore = defineStore('game', () => {
 
 
 
-    return { haveCard, addCard, getLevelCards, cardAnswer, cardForToday, daySpace, getTodayLevel }
+    return { haveCard, addCard, getLevelCards, cardAnswer, cardForToday, daySpace, getTodayLevel, countAllCard }
 })

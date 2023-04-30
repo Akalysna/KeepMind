@@ -11,6 +11,7 @@ import dayjs from 'dayjs'
 import { useRevisionStore } from '../../stores/revision/revision';
 import { compileString } from 'sass';
 import { useAllStore } from '../../stores/all';
+import TopBar from '../../components/TopBar.vue';
 
 const storeTheme = useThemeStore()
 const storeCard = useCardStore()
@@ -65,6 +66,11 @@ let revision: Revision = {} as Revision
 let card: Ref<Card> = ref({} as Card)
 let revisionId = 0
 
+let countCard = 0
+let nbCard = ref(1)
+
+let path = "/theme/" + props.id
+
 
 // Si le thème existe
 if (theme = storeTheme.get(props.id)) {
@@ -99,6 +105,8 @@ if (theme = storeTheme.get(props.id)) {
     if (daysLevel.length !== 0) {
 
         if (storeGame.cardForToday(props.id, daysLevel)) {
+
+            countCard = storeGame.countAllCard(props.id, daysLevel)
 
             storeAll.showData(storeAll.appPrefixName + "revision")
             nextLevel()
@@ -177,22 +185,69 @@ function answer(cardId: number, isCorrect: boolean) {
     storeGame.cardAnswer(props.id, cardId, level, isCorrect)
     nextCard()
     showVerso.value = false
+
+    if(isCorrect)
+        nbCard.value += 1
 }
 
 </script>
 
 <template>
-    <CardCPS v-if="card.recto" :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto" :verso="card.verso" />
+    <TopBar :top-bar-name="theme.name" :show-setting="false" :path="path"/>
 
-    <div class="btns">
-
-        <div v-show="showVerso" class="btns-answer">
-            <button v-on:click="answer(card.id, false)">Faux</button>
-            <button v-on:click="answer(card.id, true)">Juste</button>
-        </div>
-
-        <button v-show="!showVerso" v-on:click="showAnswer()">Afficher la carte</button>
+    <div class="info">
+        <p>{{ nbCard }} / {{ countCard }}</p>
+        <CardCPS v-if="card.recto" :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto" :verso="card.verso" />
     </div>
+
+        
+        <div class="btns">
+            
+            <div v-show="showVerso" class="btns-answer">
+                <button class="btn" v-on:click="answer(card.id, false)">Faux</button>
+                <button class="btn" v-on:click="answer(card.id, true)">Juste</button>
+            </div>
+            
+            <button class="btn" v-show="!showVerso" v-on:click="showAnswer()">Afficher la carte</button>
+        </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+
+.info{
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+
+    p{
+        font-size: 1.2em;
+        margin-left: 0.5em;
+    }
+}
+
+.gameview{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1em;
+    height: 100%;
+    width: 100%;
+}
+
+.btns{
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 3em;
+    left: 0;
+    right: 0;
+}
+
+    .btns-answer{
+        display: flex;
+        gap: 1em;
+    }
+
+</style>

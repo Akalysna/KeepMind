@@ -16,10 +16,25 @@ storeRevision.init()
 </script>
 
 <template>
-  <RouterView/>
+  <RouterView />
 </template>
 
 <style lang="scss">
+.btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 33px;
+  gap: 10px;
+  background: #171717;
+  border-radius: 8px;
+  color: #F5F5F5;
+  font-family: 'Barlow-Regular';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+}
 
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
@@ -35,24 +50,24 @@ storeRevision.init()
   opacity: 0;
 }
 
-*{
+* {
   font-family: Barlow-Regular;
 }
 
-.core{
-    flex-grow: 1;
-    margin: 0 1.5em;
+.core {
+  flex-grow: 1;
+  margin: 0 1.5em;
 }
 
 h1 {
-    font-family: Barlow-SemiBold;
-    text-transform: uppercase;
-    font-size: 1.6em;
+  font-family: Barlow-SemiBold;
+  text-transform: uppercase;
+  font-size: 1.6em;
 }
 
 $dark :#171717;
 
-@mixin font($name, $ext:"ttf"){
+@mixin font($name, $ext: "ttf") {
   @font-face {
     font-family: $name;
     src: url(./assets/font/Barlow/#{$name}.#{$ext});
@@ -68,14 +83,12 @@ $dark :#171717;
 @include font("Barlow-SemiBold");
 @include font("Barlow-Thin");
 
-#app{
+#app {
   padding: 0;
 }
 </style>
 
 <style scoped>
-
-
 header {
   line-height: 1.5;
   max-height: 100vh;
