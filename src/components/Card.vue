@@ -6,7 +6,7 @@ import { ref } from 'vue'
 
 const storeCard = useCardStore()
 const props = defineProps({
-    id: { type:Number, required: true },
+    id: { type:[Number, String], required: true },
     idTheme: { type:Number, required: true },
     recto: { type: Object as PropType<CardFace>, required: true },
     verso: { type: Object as PropType<CardFace>, required: true },
@@ -21,7 +21,7 @@ function show(){ showEdit.value = !showEdit.value }
 
 /**Supression de la carte */
 function deleteCard(){
-    storeCard.deleteCard(props.id, props.idTheme)
+    storeCard.deleteCard(Number(props.id), props.idTheme)
 }
 </script>
 

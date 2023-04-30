@@ -2,10 +2,13 @@ import { Theme } from "../../model/interface";
 import { defineStore } from "pinia";
 import { useAllStore } from "../all";
 import json from './theme.json'
+import dayjs from "dayjs";
+import { useRevisionStore } from "../revision/revision";
 
 export const useThemeStore = defineStore('theme', ()=> {
 
     const storeAll = useAllStore()
+    const storeRevision = useRevisionStore()
     const localStorageKey = storeAll.appPrefixName + "theme"
     let themes = {}
 
@@ -44,5 +47,40 @@ export const useThemeStore = defineStore('theme', ()=> {
         return themes
     }
 
-    return {init,getThemes,  themes, get, getSize, getCardCount, contain, save}
+    function getLastId(){
+        let lastId = 0
+
+        for(const key in themes) {
+            if(themes[key].id > lastId)
+                lastId = themes[key].id
+        }
+
+        lastId += 1
+        return lastId
+    }
+
+    function createTheme(name:string, description:string, level:number){
+
+        //Index de la futur carte
+        let id = getLastId()
+
+        //Création de la carte
+        themes[id] = {
+            "id": id,
+            "revision_id":id,
+            "name": name,
+            "description": description,
+            "creation_date": dayjs().toString(),
+            "cards": [],
+            "max_level": level
+        }
+
+        //Créer la révision de ce thème
+        storeRevision.createRevision(id)
+
+        save()
+    }
+
+
+    return {init,getThemes,  themes, get, getSize, getCardCount, contain, save, createTheme}
 })

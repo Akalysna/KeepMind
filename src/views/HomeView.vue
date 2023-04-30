@@ -6,6 +6,7 @@ import Stats from '../components/Stats.vue';
 import { useThemeStore } from '../stores/theme/theme'
 import { useCardStore } from '../stores/card/card';
 import { useAllStore } from '../stores/all';
+import router from "../router";
 
 const storeAll = useAllStore()
 const storeTheme = useThemeStore()
@@ -19,6 +20,10 @@ let themes = storeTheme.getThemes()
 /**Supprime les données de l'application */
 function clear() {
   storeAll.clearLocalStorage()
+}
+
+function createTheme() {
+  router.push({ path: `/create-theme` })
 }
 
 </script>
@@ -44,10 +49,13 @@ function clear() {
 
     <!-- Liste des thèmes de l'application -->
     <div class="themes">
+      
       <ThemeItem v-for="item in themes" :theme="item" />
     </div>
 
   </section>
+
+  <button v-on:click="createTheme()">+</button>
 </template>
 
 <style scoped lang="scss">

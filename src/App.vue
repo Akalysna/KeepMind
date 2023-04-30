@@ -52,11 +52,12 @@ storeRevision.init()
 
 * {
   font-family: Barlow-Regular;
+  box-sizing: border-box;
 }
 
 .core {
   flex-grow: 1;
-  margin: 0 1.5em;
+  padding: 0 1.5em;
 }
 
 h1 {
@@ -85,6 +86,7 @@ $dark :#171717;
 
 #app {
   padding: 0;
+  height: 100vh;
 }
 </style>
 
