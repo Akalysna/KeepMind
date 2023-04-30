@@ -26,7 +26,7 @@ export const useGameStore = defineStore('game', () => {
     function save() {
         storeCard.save()
         storeRevision.save()
-        storeTheme.save()
+        // storeTheme.save()
     }
 
     function revision(id: number) {
@@ -42,13 +42,12 @@ export const useGameStore = defineStore('game', () => {
      * Met a jour la date de la dernière révision
      * @param themeId Identifiant du thème
      */
-    function addCard(themeId: number) {
+    function addCard(revisionId: number) {
 
-        let theme: Theme | undefined;
         let revision: Revision | undefined
 
         //Vérifi si le theme et la révision existe
-        if ((theme = storeTheme.get(themeId)) && (revision = storeRevision.get(theme.revision_id))) {
+        if (revision = storeRevision.get(revisionId)) {
 
             let length = revision.cards_revision[0].length
             let nbCard = revision.new_cards
@@ -60,9 +59,6 @@ export const useGameStore = defineStore('game', () => {
             else
                 revision.cards_revision[1].push(...revision.cards_revision[0].splice(0, length))
 
-
-            // Mise à jour de la dernière révision
-            revision.last_revision = new Date().toString()
             save()
 
         } else {
@@ -130,7 +126,7 @@ export const useGameStore = defineStore('game', () => {
                     }
 
                 } else {
-                    revision.cards_revision[1].push(cardId)
+                    revision.cards_revision[1].unshift(cardId)
                 }
 
                 save()
@@ -164,7 +160,7 @@ export const useGameStore = defineStore('game', () => {
                 revision = storeRevision.get(theme.revision_id)
 
                 /**Nombre de jour depuis la première révision */
-                const days = dayjs().diff(revision.first_revision, 'day')
+                const days = 13//dayjs().diff(revision.first_revision, 'day')
 
                 /**Niveau à réviser */
                 const revisionLevels: number[] = []
@@ -190,6 +186,8 @@ export const useGameStore = defineStore('game', () => {
             } else {
                 return []
             }
+        } else {
+            return []
         }
     }
 

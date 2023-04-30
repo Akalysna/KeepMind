@@ -12,7 +12,6 @@ const props = defineProps({
     verso: { type: Object as PropType<CardFace>, required: true },
     edit: { type: Boolean, required: true },
     showVerso: { type: Boolean, default:true },
-
 })
 
 let showEdit = ref(false)

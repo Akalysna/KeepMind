@@ -26,7 +26,7 @@ function goTo() {
     <!-- Info du thème -->
     <div class="theme-item-info">
       <h2>{{ theme.name }}</h2>
-      <p>{{ storeRevision.getRevision(theme.id).last_revision }}</p>
+      <!-- <p>{{ storeRevision.getRevision(theme.id).last_revision }}</p> -->
     </div>
 
     <!-- Nombre de carte -->

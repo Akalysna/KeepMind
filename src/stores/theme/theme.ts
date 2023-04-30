@@ -11,10 +11,7 @@ export const useThemeStore = defineStore('theme', ()=> {
 
     /**Initialisation des thèmes de l'application */
     function init(){ 
-        console.log(json);
-        themes = storeAll.init(localStorageKey, json) 
-
-        console.log(themes);
+        themes = storeAll.init(localStorageKey, json)
     }
 
     /**Sauvegarde des données de l'application */

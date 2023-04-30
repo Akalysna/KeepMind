@@ -8,14 +8,21 @@ import { useThemeStore } from '../../stores/theme/theme';
 import { useGameStore } from '../../stores/game';
 import CardCPS from '../../components/Card.vue'
 import dayjs from 'dayjs'
+import { useRevisionStore } from '../../stores/revision/revision';
+import { compileString } from 'sass';
+import { useAllStore } from '../../stores/all';
 
 const storeTheme = useThemeStore()
 const storeCard = useCardStore()
+const storeRevision = useRevisionStore()
 const storeGame = useGameStore()
+const storeAll = useAllStore()
 
 const props = defineProps({
     id: { type: Number, required: true }
 })
+
+
 
 /*
 Déroulement du niveau
@@ -31,12 +38,24 @@ Déroulement du niveau
 - Si tout les niveaux sont vide plus de revision pour aujourd'hui
 */
 
+/*
+
+Vérifier que le thèmes existe
+Si première révision initilisé la révision
+    Vérifier s'il y a des Maj a faire pour un nouveau jour
+    Mettre à jour la date de la dernière révision si besoin 
+Vérifier s'il y a des cartes à révisé pour aujourd'hui
+
+*/
+
 //___________________________________________________________
 
 let daySpace = 0
 
 /**Tableau contenant l'identifiant des cartes du jour */
 let daysCardId: number[] = []
+
+/**Tableau contenant les niveaux du jour à révisé */
 let daysLevel: number[] = []
 let showVerso = ref(false)
 let level = 0
@@ -44,38 +63,44 @@ let level = 0
 let theme: Theme = {} as Theme;
 let revision: Revision = {} as Revision
 let card: Ref<Card> = ref({} as Card)
+let revisionId = 0
 
 
+// Si le thème existe
 if (theme = storeTheme.get(props.id)) {
 
-    //Première révision
-    if (theme.first_revision === "") {
-        console.log("Première révision");
+    // Récupération de la révision du thème 
+    revisionId = theme.revision_id
+    revision = storeRevision.get(revisionId) 
 
-        theme.first_revision = new Date().toString()
-        storeTheme.save()
+    //Si première révision
+    if (revision.first_revision === "") {
+        revision.first_revision = dayjs().toString()
+        revision.last_revision = dayjs().toString() 
+        revision.cards_revision[0].push(...theme.cards) //Initialisation des cartes
+        storeGame.addCard(revisionId)//Ajout des cartes du thèmes
+        storeRevision.save()
     }
 
     //Nombre de jour entre la première révision et aujourd'hui 
-    daySpace = dayjs().diff(theme.first_revision, 'day')
+    daySpace = dayjs().diff(revision.first_revision, 'day')
+    let sameDay = dayjs().isSame(dayjs(revision.last_revision))
 
-    console.log(daySpace);
-
-    //Ajout de carte en plus
-    if (daySpace > 0) {
-        console.log("Ajout de nouvelles cartes");
-        storeRevision.addCard(props.id)
+    //Nouveau jour
+    if (daySpace > 0 && !sameDay ) {
+        revision.last_revision = dayjs().toString()
+        revision.level = []
+        storeGame.addCard(revisionId)
     }
 
     //Vérifier s'il y a des cartes a révisé 
-
-    /**Tableau contenant les niveaux du jour à révisé */
-    daysLevel = storeRevision.getTodayLevel(props.id)
+    daysLevel = storeGame.getTodayLevel(props.id).filter(v => !revision.level.includes(v))
 
     if (daysLevel.length !== 0) {
 
-        if (storeRevision.cardForToday(props.id, daysLevel)) {
+        if (storeGame.cardForToday(props.id, daysLevel)) {
 
+            storeAll.showData(storeAll.appPrefixName + "revision")
             nextLevel()
             nextCard()
 
@@ -99,8 +124,8 @@ function exit(message: string) {
 function nextCard() {
     if (daysCardId.length > 0) {
         let id = daysCardId[daysCardId.length - 1]
-        if (id > 0)
-            card.value = storeCard.getCard(id)
+        if (id >= 0)
+            card.value = storeCard.get(id)
         else
             endGame()
     }
@@ -117,13 +142,15 @@ function nextLevel() {
     do {
 
         level = daysLevel.pop() ?? 0
-        console.log(level);
+
         if (level && level !== 0) {
 
-            haveCard = storeRevision.haveCard(props.id, level)
-            console.log(haveCard);
+            haveCard = storeGame.haveCard(props.id, level)
+
             if (haveCard) {
-                daysCardId = storeRevision.getCard(props.id, level)
+                daysCardId = storeGame.getLevelCards(props.id, level)
+            }else{
+                revision.level.push(level)
             }
 
         } else {
@@ -134,7 +161,8 @@ function nextLevel() {
 }
 
 function endGame() {
-    exit("Fin de la révision. End Game")
+    console.log("Fin de la révision. End Game");
+    router.push({ path: `/theme/${props.id}` })
 }
 
 
@@ -142,19 +170,19 @@ function endGame() {
 /**Montre le verso de la carte */
 function showAnswer() {
     showVerso.value = !showVerso.value
-    console.log("showVerso : ", showVerso.value);
 }
 
 function answer(cardId: number, isCorrect: boolean) {
     console.log(cardId);
-    storeRevision.cardAnswer(props.id, cardId, level, isCorrect)
+    storeGame.cardAnswer(props.id, cardId, level, isCorrect)
     nextCard()
+    showVerso.value = false
 }
 
 </script>
 
 <template>
-    <CardCPS :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto" :verso="card.verso" />
+    <CardCPS v-if="card.recto" :show-verso="showVerso" :edit="false" :id-theme="id" :id="card.id" :recto="card.recto" :verso="card.verso" />
 
     <div class="btns">
 

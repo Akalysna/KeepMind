@@ -30,7 +30,7 @@ export const useAllStore = defineStore('all', () => {
         });
         
         localStorage.setItem(localStorageKey, JSON.stringify(data))
-        console.log("Les données on été sauvegardé : " , data);
+        // console.log("Les données on été sauvegardé : " , data);
     }
 
     /**Initialisation de la "base de donnée" */
@@ -60,7 +60,8 @@ export const useAllStore = defineStore('all', () => {
 
     function showData(localStorageKey:string){
         let data = JSON.parse(localStorage.getItem(localStorageKey) ?? "")
-        console.log("Les données on été sauvegardé : " , data);
+        let text = "App data : " + localStorageKey + " : "
+        console.log( text , data);
     }
 
     return { save, init, clearLocalStorage, removeItem, showData, appPrefixName }
