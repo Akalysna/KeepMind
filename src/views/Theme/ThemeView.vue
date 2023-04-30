@@ -2,8 +2,8 @@
 
 import Card from '../../components/Card.vue';
 import Topbar from '../../components/TopBar.vue';
-import { useCardStore } from '../../stores/card';
-import { useThemeStore } from '../../stores/theme'
+import { useCardStore } from '../../stores/card/card';
+import { useThemeStore } from '../../stores/theme/theme'
 import { useRouter } from 'vue-router'
 
 const storeTheme = useThemeStore()
@@ -16,7 +16,7 @@ const props = defineProps({
     }
 })
 
-const theme = storeTheme.getTheme(props.id)
+const theme = storeTheme.get(props.id)
 
 let cards: number[] = theme?.cards || []
 
@@ -48,8 +48,8 @@ function goToRevision() {
 
             <div class="cards">
                 <Card v-for="(idCard) in cards"
-                    :recto="storeCard.getCard(idCard)?.recto || { type: 'text', data: '' }"
-                    :verso="storeCard.getCard(idCard)?.verso || { type: 'text', data: '' }" 
+                    :recto="storeCard.get(idCard)?.recto || { type: 'text', data: '' }"
+                    :verso="storeCard.get(idCard)?.verso || { type: 'text', data: '' }" 
                     :edit="false" :id="idCard" :id-theme="id" />
             </div>
     </div>

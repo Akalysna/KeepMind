@@ -1,25 +1,39 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import { useDataStore } from './stores/data';
+import { useThemeStore } from './stores/theme/theme';
+import { useCardStore } from './stores/card/card';
+import { useRevisionStore } from './stores/revision/revision';
 
-const store = useDataStore()
-store.init()
-// store.clearData() 
+const storeTheme = useThemeStore()
+const storeCard = useCardStore()
+const storeRevision = useRevisionStore()
+
+//Initialisation de la base de données
+storeTheme.init()
+storeCard.init()
+storeRevision.init()
 
 </script>
 
 <template>
-  <!-- <RouterView v-slot="{Component, route }" >
-    <Transition :name="route.meta.transition">
-      <div>
-        <component :is="Component"/>
-      </div>
-    </Transition>
-  </RouterView> -->
   <RouterView/>
 </template>
 
 <style lang="scss">
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
 
 *{
   font-family: Barlow-Regular;
