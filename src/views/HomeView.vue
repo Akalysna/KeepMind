@@ -45,12 +45,12 @@ function createTheme() {
     </div>
   </header>
     
-    <Modal>
+    <!-- <Modal>
       <form action="">
         <label for="">THE INPUT</label>
         <input type="text">
       </form>
-    </Modal>
+    </Modal> -->
 
   <!-- <button v-on:click="clear()">Supprime tout !</button> -->
 
