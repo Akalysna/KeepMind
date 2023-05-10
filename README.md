@@ -11,6 +11,7 @@ npm run dev
 - Révision d'un thème
     - Recto/Verso de la carte
 - Passage des cartes au niveau suivant si reussite et niveau 1 si échec
+- Service worker
 
 ## Organisation
 L'application est codé en typescript (plus simple au niveau du typage). Elle utilise des interfaces pour définir les différent élément de l'appli : Thème, révision, carte
