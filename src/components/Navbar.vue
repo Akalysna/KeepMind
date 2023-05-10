@@ -23,9 +23,10 @@ function createTheme() {
 
     <NavItem img="../assets/icon/chart-bar.svg" text="Stats">
       <template #icon>
-        <IconChartBar id="icon-pencil" />
+        <IconChartBar id="icon-pencil"/>
       </template>
     </NavItem>
+
   </div>
 </template>
 
@@ -49,22 +50,24 @@ function createTheme() {
 
 .navbar {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: start;
   align-items: center;
 
   background: #FFFFFF;
   box-shadow: 2px 4px 4px rgba(115, 115, 115, 0.25);
-  border-radius: 28px;
+  // border-radius: 28px;
 
   padding: 0.8em;
-  width: 90vw;
+  // width: 90vw;
+  height: 100%;
   margin: auto;
 
   gap: 4em;
 
-  position: fixed;
-  bottom: 1.5em;
-  left: 0;
-  right: 0;
+  // position: fixed;
+  // bottom: 1.5em;
+  // left: 0;
+  // right: 0;
 }
 </style>

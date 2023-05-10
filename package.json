@@ -18,7 +18,8 @@
     "sass": "^1.59.3",
     "vue": "^3.2.47",
     "vue-picture-input": "^2.4.0",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "vuetify": "^3.2.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

@@ -8,6 +8,7 @@ import { useCardStore } from '../stores/card/card';
 import { useAllStore } from '../stores/all';
 import router from "../router";
 import Navbar from "../components/Navbar.vue";
+import Modal from "../components/Modal.vue";
 
 const storeAll = useAllStore()
 const storeTheme = useThemeStore()
@@ -31,7 +32,8 @@ function createTheme() {
 
 
 <template>
-
+  
+  <Navbar />
   <header>
     <h1>Keep Mind</h1>
 
@@ -42,8 +44,15 @@ function createTheme() {
       <Stats :number="0" name="Apprise" />
     </div>
   </header>
+    
+    <Modal>
+      <form action="">
+        <label for="">THE INPUT</label>
+        <input type="text">
+      </form>
+    </Modal>
 
-  <button v-on:click="clear()">Supprime tout !</button>
+  <!-- <button v-on:click="clear()">Supprime tout !</button> -->
 
   <section>
     <h2>Mes thèmes</h2>
@@ -54,21 +63,21 @@ function createTheme() {
       <ThemeItem v-for="item in themes" :theme="item" />
     </div>
 
+
   </section>
 
   <!-- <button v-on:click="createTheme()">+</button> -->
 
-  <Navbar />
 </template>
 
 <style scoped lang="scss">
 header {
   display: flex;
-  justify-content: end;
+  justify-content: top;
   flex-direction: column;
   align-items: center;
   padding-top: 2em;
-
+  padding: 3em;
   background-color: #171717;
 
   h1 {
@@ -83,11 +92,12 @@ header {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 80%;
+  // width: 80%;
 }
 
 section {
   margin: 1em 1.5em;
+  width: 100vw;
 }
 
 .themes {
