@@ -1,35 +1,23 @@
 # KeepMind
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+## Déploiement de l'application
+npm i
 npm run dev
-```
 
-### Compile and Minify for Production
+## Fonctionnalité du projet
+- Création d'un thème 
+- Création de carte
+- Suppression de carte
+- Révision d'un thème
+    - Recto/Verso de la carte
+- Passage des cartes au niveau suivant si reussite et niveau 1 si échec
 
-```sh
-npm run build
-```
+## Organisation
+L'application est codé en typescript (plus simple au niveau du typage). Elle utilise des interfaces pour définir les différent élément de l'appli : Thème, révision, carte
 
-### Lint with [ESLint](https://eslint.org/)
+Les données par défaut sont stockées dans un json qui est par la suite stoqué dans le localstorage
+Le localstorage est composé des trois clées, une pour les cartes, une pour les thèmes et la dernière pour les révisions
+Cahque dossier dans le dossier "Store" contient un Json (valeur par défaut) et un store qui lui est associér
 
-```sh
-npm run lint
-```
+Les views sont rangées dans des dossiers. 
+Les icons de type svg ont été ajouter dans le dossier component/icons et non dans assets
